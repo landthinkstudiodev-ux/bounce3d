@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nokia Bounce 3D - Authentic Level 1</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        .pixel-font {
+            font-family: 'Press Start 2P', monospace;
+        }
+
+        .touch-btn {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            transition: all 0.1s ease;
+        }
+        
+        .touch-btn:active, .touch-btn.active {
+            background: rgba(255, 255, 255, 0.55);
+            transform: scale(0.92);
+        }
+
+        .hud-text {
+            text-shadow: 2px 2px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+        }
+
+        .nokia-screen-border {
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+<body class="relative flex flex-col justify-between h-screen w-screen overflow-hidden select-none bg-slate-900 nokia-screen-border">
+
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- 3D Canvas -->
+    <canvas id="game-canvas" class="w-full h-full absolute inset-0"></canvas>
+
+    <!-- Top Retro Nokia HUD -->
+    <div class="absolute top-0 left-0 right-0 p-3 md:p-4 flex justify-between items-center pointer-events-none z-10">
+        <!-- Lives & Ball State -->
+        <div class="flex items-center space-x-3 bg-black/50 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/20 backdrop-blur-md">
+            <div id="ball-hud-icon" class="w-6 h-6 rounded-full bg-gradient-to-tr from-red-600 via-red-500 to-rose-300 shadow-md"></div>
+            <span id="lives-count" class="pixel-font text-base md:text-xl text-yellow-400 font-bold hud-text">x3</span>
+        </div>
+
+        <!-- Rings Collector -->
+        <div class="flex items-center space-x-2 bg-black/50 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/20 backdrop-blur-md">
+            <div class="w-4 h-4 md:w-5 md:h-5 rounded-full border-4 border-yellow-400 shadow-sm animate-pulse"></div>
+            <span id="rings-count" class="pixel-font text-xs md:text-lg text-yellow-300 font-bold hud-text">0 / 9</span>
+        </div>
+
+        <!-- Score, Level & Pause -->
+        <div class="flex items-center space-x-2 md:space-x-4">
+            <div class="bg-black/50 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/20 backdrop-blur-md text-right">
+                <div class="text-[9px] text-sky-300 font-bold tracking-widest uppercase">Level 1</div>
+                <span id="score-text" class="pixel-font text-xs md:text-lg text-white font-bold hud-text">000000</span>
+            </div>
+            <button id="pause-btn" onclick="togglePause()" class="pointer-events-auto bg-black/50 hover:bg-black/70 text-white w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center border border-white/20 backdrop-blur-md transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 9v6m4-6v6" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- State Indicator Toast -->
+    <div id="toast-msg" class="absolute top-16 left-1/2 transform -translate-x-1/2 bg-yellow-400/90 text-slate-900 font-bold px-4 py-1.5 rounded-full shadow-lg border border-yellow-200 pixel-font text-xs opacity-0 transition-opacity duration-300 pointer-events-none z-10">
+        CHECKPOINT!
+    </div>
+
+    <!-- Touch Controls Overlay for Mobile/Tablet -->
+    <div class="absolute bottom-5 left-0 right-0 px-5 flex justify-between items-end pointer-events-none z-10">
+        <!-- Directional Buttons (Left / Right) -->
+        <div class="flex space-x-3 md:space-x-4 pointer-events-auto">
+            <button id="btn-left" class="touch-btn w-14 h-14 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-white active:bg-white/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 md:h-10 md:w-10 drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <button id="btn-right" class="touch-btn w-14 h-14 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-white active:bg-white/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 md:h-10 md:w-10 drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Jump Button -->
+        <div class="pointer-events-auto">
+            <button id="btn-jump" class="touch-btn w-16 h-16 md:w-24 md:h-24 rounded-full flex items-center justify-center text-white bg-gradient-to-tr from-amber-500/30 to-yellow-300/30 active:bg-yellow-400/50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 md:h-12 md:w-12 drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay Screens -->
+    <div id="overlay-screen" class="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col justify-center items-center z-20 transition-opacity duration-300">
+        <div class="bg-slate-900/90 border-4 border-yellow-500 rounded-3xl p-6 md:p-8 max-w-md w-11/12 text-center shadow-2xl relative overflow-hidden">
+            
+            <div class="absolute -top-12 -left-12 w-32 h-32 bg-yellow-500/20 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-red-500/20 rounded-full blur-2xl"></div>
+
+            <h1 id="overlay-title" class="pixel-font text-2xl md:text-3xl text-yellow-400 mb-2 tracking-wider hud-text">NOKIA BOUNCE 3D</h1>
+            <p id="overlay-desc" class="text-slate-300 mb-4 text-xs md:text-sm">Authentic Nokia Level 1 Remake!</p>
+
+            <!-- Loading Progress Bar -->
+            <div id="loading-box" class="my-4 w-full bg-slate-800 rounded-full h-4 border border-slate-700 p-0.5 overflow-hidden">
+                <div id="loading-bar" class="bg-gradient-to-r from-amber-500 to-yellow-400 h-full rounded-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <div id="high-score-box" class="mb-4 text-yellow-300 pixel-font text-xs hidden">
+                HIGH SCORE: <span id="high-score-val">000000</span>
+            </div>
+
+            <div class="space-y-3">
+                <button id="start-btn" onclick="startGame()" class="w-full py-3.5 bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white pixel-font text-base rounded-xl shadow-lg transform active:scale-95 transition">
+                    START GAME
+                </button>
+                <div class="text-[10px] md:text-xs text-slate-400 pt-2 flex justify-center space-x-3">
+                    <span>⬅️ ➡️ / A-D : Move</span>
+                    <span>SPACE / ⬆️ : Jump</span>
+                    <span>P : Pause</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- RETRO SOUND ENGINE ---
+        class NokiaSoundFX {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playBounce(pitchMultiplier = 1) {
+                if (!this.ctx || this.muted) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(120 * pitchMultiplier, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(360 * pitchMultiplier, this.ctx.currentTime + 0.11);
+                
+                gain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.11);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.11);
+            }
+
+            playRingCollect() {
+                if (!this.ctx || this.muted) return;
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.05);
+                    gain.gain.setValueAtTime(0.2, this.ctx.currentTime + idx * 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.05 + 0.1);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(this.ctx.currentTime + idx * 0.05);
+                    osc.stop(this.ctx.currentTime + idx * 0.05 + 0.1);
+                });
+            }
+
+            playPump(inflate = true) {
+                if (!this.ctx || this.muted) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                const startFreq = inflate ? 140 : 420;
+                const endFreq = inflate ? 420 : 140;
+                
+                osc.frequency.setValueAtTime(startFreq, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(endFreq, this.ctx.currentTime + 0.25);
+                
+                gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            }
+
+            playPop() {
+                if (!this.ctx || this.muted) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(240, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.25);
+                
+                gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            }
+
+            playWinTune() {
+                if (!this.ctx || this.muted) return;
+                const arpeggio = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
+                arpeggio.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.08);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.08 + 0.2);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(this.ctx.currentTime + idx * 0.08);
+                    osc.stop(this.ctx.currentTime + idx * 0.08 + 0.2);
+                });
+            }
+        }
+
+        const sound = new NokiaSoundFX();
+
+        // --- GAME ENGINE & VARIABLES ---
+        let scene, camera, renderer, clock;
+        let ball, ballMaterial;
+        
+        let lives = 3;
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('bounce_high_score') || '0');
+        let collectedRings = 0;
+        let totalRings = 0;
+        let gameState = 'LOADING';
+
+        let ballType = 'NORMAL'; 
+        let ballRadius = 0.5;
+        let ballVelocity = new THREE.Vector3(0, 0, 0);
+        let ballPosition = new THREE.Vector3(0, 3, 0);
+        let checkpointPosition = new THREE.Vector3(0, 3, 0);
+        let isGrounded = false;
+        let isInWater = false;
+        let pumpCooldown = 0;
+
+        // Squash & Stretch deformation state
+        let squashX = 1;
+        let squashY = 1;
+
+        let blocks = [];
+        let crackedBlocks = [];
+        let rings = [];
+        let spikes = [];
+        let pumps = [];
+        let waterZones = [];
+        let checkpointFlag = null;
+        let checkpointActivated = false;
+        let exitRing = null;
+        let exitDoor = null;
+        let exitUnlocked = false;
+
+        const GRAVITY = -26.0;
+        let currentSpeed = 10.5;
+        let currentJumpImpulse = 16.5;
+
+        const keys = { left: false, right: false, jump: false };
+
+        function createBrickTexture(cracked = false) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = cracked ? '#991b1b' : '#b91c1c';
+            ctx.fillRect(0, 0, 128, 128);
+
+            ctx.strokeStyle = '#7f1d1d';
+            ctx.lineWidth = 4;
+
+            const rows = 4;
+            const rowHeight = 128 / rows;
+            for(let i=0; i<=rows; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, i * rowHeight);
+                ctx.lineTo(128, i * rowHeight);
+                ctx.stroke();
+            }
+
+            for(let r=0; r<rows; r++) {
+                const offset = (r % 2 === 0) ? 0 : 32;
+                for(let c=-1; c<4; c++) {
+                    ctx.beginPath();
+                    ctx.moveTo(c * 64 + offset, r * rowHeight);
+                    ctx.lineTo(c * 64 + offset, (r + 1) * rowHeight);
+                    ctx.stroke();
+                }
+            }
+
+            if (cracked) {
+                ctx.strokeStyle = '#fca5a5';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(20, 20); ctx.lineTo(50, 60); ctx.lineTo(40, 100);
+                ctx.moveTo(80, 10); ctx.lineTo(90, 70); ctx.lineTo(110, 110);
+                ctx.stroke();
+            }
+
+            for(let i=0; i<250; i++) {
+                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.15)';
+                ctx.fillRect(Math.random()*128, Math.random()*128, 2, 2);
+            }
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            return texture;
+        }
+
+        function createBallTexture(type) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+
+            if (type === 'STEEL') {
+                ctx.fillStyle = '#64748b';
+                ctx.fillRect(0, 0, 256, 128);
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillRect(0, 32, 256, 64);
+            } else {
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(0, 0, 256, 128);
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(0, 32, 256, 64);
+                
+                ctx.fillStyle = '#fde047';
+                ctx.beginPath();
+                ctx.arc(64, 64, 16, 0, Math.PI * 2);
+                ctx.arc(192, 64, 16, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function initScene() {
+            const container = document.getElementById('game-canvas');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x38bdf8);
+            scene.fog = new THREE.FogExp2(0x38bdf8, 0.012);
+
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+            dirLight.position.set(20, 40, 30);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            scene.add(dirLight);
+
+            createClouds();
+            buildNokiaLevel1();
+
+            window.addEventListener('resize', onWindowResize);
+            setupControlListeners();
+
+            clock = new THREE.Clock();
+            simulateLoading();
+            animate();
+        }
+
+        function createClouds() {
+            const cloudGeo = new THREE.DodecahedronGeometry(2.5, 1);
+            const cloudMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
+            
+            for(let i = 0; i < 25; i++) {
+                const cloudGroup = new THREE.Group();
+                const count = 3 + Math.floor(Math.random() * 3);
+                for(let j = 0; j < count; j++) {
+                    const cloud = new THREE.Mesh(cloudGeo, cloudMat);
+                    cloud.position.set(j * 1.8, Math.random() * 1, Math.random() * 1);
+                    cloud.scale.setScalar(0.8 + Math.random() * 0.5);
+                    cloudGroup.add(cloud);
+                }
+                cloudGroup.position.set((Math.random() - 0.2) * 160, 12 + Math.random() * 16, -12 - Math.random() * 15);
+                scene.add(cloudGroup);
+            }
+        }
+
+        function buildNokiaLevel1() {
+            blocks.forEach(b => scene.remove(b.mesh));
+            crackedBlocks.forEach(cb => scene.remove(cb.mesh));
+            rings.forEach(r => scene.remove(r.mesh));
+            spikes.forEach(s => scene.remove(s.group));
+            pumps.forEach(p => scene.remove(p.mesh));
+            waterZones.forEach(w => scene.remove(w.mesh));
+            if (ball) scene.remove(ball);
+            if (checkpointFlag) scene.remove(checkpointFlag.group);
+            if (exitRing) scene.remove(exitRing);
+            if (exitDoor) scene.remove(exitDoor.mesh);
+
+            blocks = [];
+            crackedBlocks = [];
+            rings = [];
+            spikes = [];
+            pumps = [];
+            waterZones = [];
+
+            const brickTex = createBrickTexture(false);
+
+            function addBlock(x, y, z, w, h, d, isCracked = false) {
+                const geo = new THREE.BoxGeometry(w, h, d);
+                const tex = isCracked ? createBrickTexture(true) : brickTex.clone();
+                tex.repeat.set(w / 2, h / 2);
+                tex.needsUpdate = true;
+
+                const mat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.5 });
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.set(x + w/2, y + h/2, z);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                scene.add(mesh);
+
+                const box = new THREE.Box3().setFromObject(mesh);
+                const blockObj = { mesh, box, x: x + w/2, y: y + h/2, w, h, min: box.min, max: box.max };
+
+                if (isCracked) {
+                    crackedBlocks.push(blockObj);
+                } else {
+                    blocks.push(blockObj);
+                }
+            }
+
+            function addRing(x, y, z) {
+                const geo = new THREE.TorusGeometry(0.8, 0.15, 16, 32);
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: 0xfacc15, metalness: 0.9, roughness: 0.2, emissive: 0x854d0e, emissiveIntensity: 0.4
+                });
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.set(x, y, z);
+                mesh.castShadow = true;
+                scene.add(mesh);
+                rings.push({ mesh, collected: false });
+            }
+
+            function addSpike(x, y, z, count = 3) {
+                const group = new THREE.Group();
+                const geo = new THREE.ConeGeometry(0.35, 0.9, 8);
+                const mat = new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.8, roughness: 0.3 });
+
+                for(let i = 0; i < count; i++) {
+                    const spike = new THREE.Mesh(geo, mat);
+                    spike.position.set((i - (count-1)/2) * 0.7, 0.45, 0);
+                    spike.castShadow = true;
+                    group.add(spike);
+                }
+                group.position.set(x, y, z);
+                scene.add(group);
+                spikes.push({ group, pos: new THREE.Vector3(x, y, z) });
+            }
+
+            function addPump(x, y, z, type = 'INFLATE') {
+                const geo = new THREE.CylinderGeometry(0.6, 0.8, 0.8, 16);
+                const color = type === 'INFLATE' ? 0xeab308 : (type === 'STEEL' ? 0x64748b : 0x0284c7);
+                const mat = new THREE.MeshStandardMaterial({ color, metalness: 0.6, roughness: 0.3 });
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.set(x, y + 0.4, z);
+                mesh.castShadow = true;
+                scene.add(mesh);
+
+                pumps.push({ mesh, type, pos: new THREE.Vector3(x, y + 0.4, z) });
+            }
+
+            function addWaterPool(x, y, z, width, height, depth) {
+                const geo = new THREE.BoxGeometry(width, height, depth);
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: 0x0284c7, transparent: true, opacity: 0.65, roughness: 0.1, metalness: 0.1
+                });
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.set(x + width/2, y + height/2, z);
+                scene.add(mesh);
+
+                const box = new THREE.Box3().setFromObject(mesh);
+                waterZones.push({ mesh, box, surfaceY: y + height });
+            }
+
+            // --- 100% AUTHENTIC FULL NOKIA BOUNCE LEVEL 1 MAP (160+ UNITS LONG) ---
+            
+            // SEKTOR 1: Area Awal & Ring 1, Ring 2
+            addBlock(-4, 0, 0, 16, 2, 3);   // Landasan Start
+            addBlock(-4, 2, 0, 2, 10, 3);   // Dinding kiri penyangga awal
+            addRing(4, 3.2, 0);             // RING 1
+            addBlock(12, 0, 0, 10, 2, 3);
+            addSpike(15, 2, 0, 3);          // Duri pertama
+            addRing(18, 3.2, 0);             // RING 2
+
+            // SEKTOR 2: Dinding Tinggi & Pompa Pembesar (Ring 3)
+            addBlock(22, 0, 0, 12, 2, 3);
+            addPump(25, 2, 0, 'INFLATE');   // Pompa Bola Besar
+            addBlock(34, 2, 0, 2, 6, 3);    // Dinding disesuaikan ketinggiannya agar lompatan pas
+            addRing(35, 9.0, 0);            // RING 3 (Di atas dinding)
+
+            // SEKTOR 3: Area Kolam Air & Apung / Buoyancy (Ring 4 & Ring 5)
+            addBlock(36, 0, 0, 6, 2, 3);
+            addWaterPool(42, -1.5, 0, 16, 3.8, 3); // Kolam Air
+            addBlock(42, -2, 0, 16, 0.5, 3);      // Dasar Laut
+            addRing(48, 1.2, 0);            // RING 4 (Mengapung di air)
+            addBlock(58, 0, 0, 8, 2, 3);
+            addRing(62, 3.2, 0);            // RING 5 (Di platform setelah air)
+
+            // SEKTOR 4: Checkpoint & Pompa Pengecil / Lorong Sempit (Ring 6)
+            addBlock(66, 0, 0, 16, 2, 3);
+            
+            // Bendera Checkpoint
+            const flagGroup = new THREE.Group();
+            const poleGeo = new THREE.CylinderGeometry(0.08, 0.08, 2.5);
+            const poleMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8 });
+            const pole = new THREE.Mesh(poleGeo, poleMat);
+            pole.position.y = 1.25;
+            const clothGeo = new THREE.BoxGeometry(0.8, 0.5, 0.05);
+            const clothMat = new THREE.MeshStandardMaterial({ color: 0xef4444 });
+            const cloth = new THREE.Mesh(clothGeo, clothMat);
+            cloth.position.set(0.4, 2.0, 0);
+            flagGroup.add(pole, cloth);
+            flagGroup.position.set(70, 2, 0);
+            scene.add(flagGroup);
+            checkpointFlag = { group: flagGroup, clothMat };
+
+            addPump(76, 2, 0, 'SMALL');      // Pompa Bola Kecil
+
+            // Lorong Sempit
+            addBlock(82, 0, 0, 18, 2, 3);   // Lantai lorong
+            addBlock(82, 3.0, 0, 18, 5, 3); // Atap lorong sempit
+            addRing(90, 1.8, 0);            // RING 6 (Di dalam lorong sempit)
+
+            // SEKTOR 5: Pompa Bola Besi & Dinding Bata Retak (Ring 7 & Ring 8)
+            addBlock(100, 0, 0, 14, 2, 3);
+            addPump(104, 2, 0, 'STEEL');    // Pompa Bola Besi
+            addBlock(114, 2, 0, 3, 6, 3, true); // Dinding Bata Retak Pertama (Hancur oleh Bola Besi)
+            addRing(120, 3.2, 0);           // RING 7
+            addBlock(126, 2, 0, 3, 6, 3, true); // Dinding Bata Retak Kedua
+            addRing(132, 3.2, 0);           // RING 8
+
+            // SEKTOR 6: Tantangan Akhir Duri, Ring 9 & Gerbang Portal
+            addBlock(135, 0, 0, 25, 2, 3);
+            addPump(138, 2, 0, 'INFLATE');  // Pompa Pengembali
+            addSpike(144, 2, 0, 4);         // Rintangan Duri Panjang
+            addRing(150, 4.0, 0);           // RING 9 (Ring Terakhir)
+            addSpike(154, 2, 0, 3);
+
+            // Gerbang Pintu Penghalang Akhir
+            const doorGeo = new THREE.BoxGeometry(1, 5, 3);
+            const doorMat = new THREE.MeshStandardMaterial({ color: 0xef4444, metalness: 0.5, roughness: 0.3 });
+            const doorMesh = new THREE.Mesh(doorGeo, doorMat);
+            doorMesh.position.set(158, 4.5, 0);
+            doorMesh.castShadow = true;
+            scene.add(doorMesh);
+            exitDoor = { mesh: doorMesh, box: new THREE.Box3().setFromObject(doorMesh) };
+
+            // Portal Cincin Finish
+            const portalGeo = new THREE.TorusGeometry(1.6, 0.22, 16, 32);
+            const portalMat = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0x991b1b, emissiveIntensity: 0.6 });
+            exitRing = new THREE.Mesh(portalGeo, portalMat);
+            exitRing.position.set(162, 3.6, 0);
+            scene.add(exitRing);
+
+            totalRings = rings.length;
+
+            createBallMesh();
+            setBallState('NORMAL');
+            checkpointPosition.set(0, 3, 0);
+            resetBallToPosition(checkpointPosition);
+        }
+
+        function createBallMesh() {
+            const geo = new THREE.SphereGeometry(1, 32, 32);
+            ballMaterial = new THREE.MeshStandardMaterial({ 
+                map: createBallTexture('NORMAL'), 
+                roughness: 0.35, 
+                metalness: 0.1 
+            });
+            ball = new THREE.Mesh(geo, ballMaterial);
+            ball.castShadow = true;
+            scene.add(ball);
+        }
+
+        function setBallState(type) {
+            const oldRadius = ballRadius;
+            ballType = type;
+
+            if (type === 'INFLATE' || type === 'BIG') {
+                ballType = 'BIG';
+                ballRadius = 0.75;
+                currentJumpImpulse = 20.0; // Peningkatan daya lompat bola besar
+                currentSpeed = 11.5;
+                ballMaterial.map = createBallTexture('NORMAL');
+                showToast("PUMP: BIG RUBBER BALL!");
+            } else if (type === 'STEEL') {
+                ballRadius = 0.5;
+                currentJumpImpulse = 12.0;
+                currentSpeed = 8.5;
+                ballMaterial.map = createBallTexture('STEEL');
+                showToast("PUMP: HEAVY STEEL BALL!");
+            } else if (type === 'SMALL') {
+                ballRadius = 0.35;
+                currentJumpImpulse = 15.0;
+                currentSpeed = 10.0;
+                ballMaterial.map = createBallTexture('NORMAL');
+                showToast("PUMP: SMALL TUNNEL BALL!");
+            } else {
+                ballType = 'NORMAL';
+                ballRadius = 0.5;
+                currentJumpImpulse = 16.5;
+                currentSpeed = 10.0;
+                ballMaterial.map = createBallTexture('NORMAL');
+            }
+            
+            // AUTO POSITION CORRECTION TO PREVENT EMBEDDING INTO FLOOR OR PUMP
+            const deltaRadius = ballRadius - oldRadius;
+            if (deltaRadius > 0) {
+                ballPosition.y += deltaRadius + 0.15;
+            }
+            ballVelocity.y = Math.max(0.5, ballVelocity.y);
+
+            ballMaterial.needsUpdate = true;
+            ball.scale.setScalar(ballRadius);
+
+            const icon = document.getElementById('ball-hud-icon');
+            if (ballType === 'STEEL') {
+                icon.className = "w-6 h-6 rounded-full bg-slate-500 shadow-md border border-slate-300";
+            } else if (ballType === 'BIG') {
+                icon.className = "w-8 h-8 rounded-full bg-red-500 shadow-md animate-bounce";
+            } else if (ballType === 'SMALL') {
+                icon.className = "w-4 h-4 rounded-full bg-red-500 shadow-md";
+            } else {
+                icon.className = "w-6 h-6 rounded-full bg-gradient-to-tr from-red-600 via-red-500 to-rose-300 shadow-md";
+            }
+        }
+
+        function resetBallToPosition(pos) {
+            ballPosition.copy(pos);
+            ballVelocity.set(0, 0, 0);
+            squashX = 1; squashY = 1;
+            if (ball) ball.position.copy(ballPosition);
+        }
+
+        function showToast(text) {
+            const toast = document.getElementById('toast-msg');
+            toast.innerText = text;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => toast.classList.add('opacity-0'), 2200);
+        }
+
+        function simulateLoading() {
+            let progress = 0;
+            const bar = document.getElementById('loading-bar');
+            const interval = setInterval(() => {
+                progress += 25;
+                bar.style.width = `${progress}%`;
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    document.getElementById('loading-box').classList.add('hidden');
+                    document.getElementById('high-score-box').classList.remove('hidden');
+                    document.getElementById('high-score-val').innerText = String(highScore).padStart(6, '0');
+                    gameState = 'START';
+                }
+            }, 100);
+        }
+
+        function setupControlListeners() {
+            window.addEventListener('keydown', (e) => {
+                if (gameState === 'PLAYING') {
+                    if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+                    if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+                    if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+                        if (!keys.jump && (isGrounded || isInWater)) {
+                            ballVelocity.y = currentJumpImpulse * (isInWater ? 0.75 : 1.0);
+                            squashY = 1.35; squashX = 0.75; // Squash on jump!
+                            sound.playBounce(ballType === 'BIG' ? 0.7 : (ballType === 'STEEL' ? 0.5 : 1));
+                        }
+                        keys.jump = true;
+                    }
+                }
+                if (e.code === 'KeyP') togglePause();
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+                if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+                if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') keys.jump = false;
+            });
+
+            const bindBtn = (id, keyName) => {
+                const btn = document.getElementById(id);
+                const start = (e) => {
+                    e.preventDefault();
+                    sound.init();
+                    if (keyName === 'jump') {
+                        if (isGrounded || isInWater) {
+                            ballVelocity.y = currentJumpImpulse * (isInWater ? 0.75 : 1.0);
+                            squashY = 1.35; squashX = 0.75;
+                            sound.playBounce();
+                        }
+                    }
+                    keys[keyName] = true;
+                    btn.classList.add('active');
+                };
+                const end = (e) => {
+                    e.preventDefault();
+                    keys[keyName] = false;
+                    btn.classList.remove('active');
+                };
+                btn.addEventListener('touchstart', start, { passive: false });
+                btn.addEventListener('touchend', end);
+                btn.addEventListener('mousedown', start);
+                btn.addEventListener('mouseup', end);
+                btn.addEventListener('mouseleave', end);
+            };
+
+            bindBtn('btn-left', 'left');
+            bindBtn('btn-right', 'right');
+            bindBtn('btn-jump', 'jump');
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function updatePhysics(delta) {
+            if (gameState !== 'PLAYING') return;
+
+            let targetVx = 0;
+            if (keys.left) targetVx -= currentSpeed;
+            if (keys.right) targetVx += currentSpeed;
+
+            ballVelocity.x = THREE.MathUtils.lerp(ballVelocity.x, targetVx, delta * 14);
+
+            isInWater = false;
+            for (let water of waterZones) {
+                if (water.box.containsPoint(ballPosition)) {
+                    isInWater = true;
+                    break;
+                }
+            }
+
+            if (isInWater) {
+                if (ballType === 'BIG') {
+                    ballVelocity.y += (GRAVITY * -0.6) * delta;
+                } else if (ballType === 'STEEL') {
+                    ballVelocity.y += GRAVITY * 1.2 * delta;
+                } else {
+                    ballVelocity.y += GRAVITY * 0.2 * delta;
+                }
+                ballVelocity.x *= 0.92;
+            } else {
+                ballVelocity.y += GRAVITY * delta;
+            }
+
+            // SUB-STEPPING UNTUK MENCEGAH TUNNELING/TEMBUS SAAT BERGERAK CEPAT
+            const subSteps = 6;
+            const subDelta = delta / subSteps;
+
+            const activeObstacles = [...blocks];
+            if (!exitUnlocked && exitDoor) activeObstacles.push(exitDoor);
+
+            for (let step = 0; step < subSteps; step++) {
+                ballPosition.addScaledVector(ballVelocity, subDelta);
+                isGrounded = false;
+
+                for (let block of activeObstacles) {
+                    const closestPoint = new THREE.Vector3();
+                    block.box.clampPoint(ballPosition, closestPoint);
+                    
+                    // Batasi pengecekan jarak pada sumbu Z agar tetap sejajar
+                    closestPoint.z = ballPosition.z;
+
+                    const diff = ballPosition.clone().sub(closestPoint);
+                    const distance = diff.length();
+
+                    // Toleransi jarak pijakan diperlebar sedikit agar deteksi tanah lebih responsif
+                    if (distance <= ballRadius + 0.05) {
+                        let normal;
+                        if (distance === 0) {
+                            normal = new THREE.Vector3(0, 1, 0); // Default ke atas jika berada di dalam pusat
+                        } else {
+                            normal = diff.normalize();
+                        }
+
+                        if (distance < ballRadius) {
+                            // Dorong bola keluar dari dalam obstacle jika tembus
+                            const penetrationDepth = ballRadius - distance;
+                            ballPosition.addScaledVector(normal, penetrationDepth);
+
+                            // Respon Pantulan dan Kecepatan
+                            const dot = ballVelocity.dot(normal);
+                            if (dot < 0) {
+                                ballVelocity.sub(normal.clone().multiplyScalar(dot));
+                            }
+                        }
+
+                        // Jika posisi normal berada di atas balok (permukaan pijakan)
+                        if (normal.y > 0.3) {
+                            isGrounded = true;
+                            if (Math.abs(ballVelocity.y) > 3) {
+                                sound.playBounce();
+                                squashY = 0.65; squashX = 1.35;
+                            }
+                        }
+                    }
+                }
+
+                // Cek Cracked Blocks
+                for (let i = crackedBlocks.length - 1; i >= 0; i--) {
+                    const cb = crackedBlocks[i];
+                    const closestPoint = new THREE.Vector3();
+                    cb.box.clampPoint(ballPosition, closestPoint);
+                    closestPoint.z = ballPosition.z;
+
+                    const diff = ballPosition.clone().sub(closestPoint);
+                    const distance = diff.length();
+
+                    if (distance < ballRadius) {
+                        if (ballType === 'STEEL') {
+                            sound.playPop();
+                            scene.remove(cb.mesh);
+                            crackedBlocks.splice(i, 1);
+                            score += 200;
+                            updateHUD();
+                            showToast("CRACKED BRICK SMASHED!");
+                        } else {
+                            let normal = distance === 0 ? new THREE.Vector3(1, 0, 0) : diff.normalize();
+                            const penetrationDepth = ballRadius - distance;
+                            ballPosition.addScaledVector(normal, penetrationDepth);
+                            
+                            const dot = ballVelocity.dot(normal);
+                            if (dot < 0) ballVelocity.sub(normal.clone().multiplyScalar(dot));
+                        }
+                    }
+                }
+            }
+
+            if (ballPosition.y < -9) {
+                handlePlayerHit();
+                return;
+            }
+
+            ball.position.copy(ballPosition);
+
+            // Elastic recovery
+            squashX = THREE.MathUtils.lerp(squashX, 1.0, delta * 12);
+            squashY = THREE.MathUtils.lerp(squashY, 1.0, delta * 12);
+            if (ballType !== 'STEEL') {
+                ball.scale.set(ballRadius * squashX, ballRadius * squashY, ballRadius * squashX);
+            } else {
+                ball.scale.setScalar(ballRadius);
+            }
+
+            const rotationAngle = (ballVelocity.x * delta) / ballRadius;
+            ball.rotation.z -= rotationAngle;
+
+            rings.forEach(ring => {
+                if (!ring.collected) {
+                    ring.mesh.rotation.y += delta * 2.8;
+                    if (ballPosition.distanceTo(ring.mesh.position) < ballRadius + 0.8) {
+                        ring.collected = true;
+                        scene.remove(ring.mesh);
+                        collectedRings++;
+                        score += 500;
+                        sound.playRingCollect();
+                        updateHUD();
+
+                        if (collectedRings >= totalRings) unlockExitGate();
+                    }
+                }
+            });
+
+            if (pumpCooldown > 0) pumpCooldown -= delta;
+
+            pumps.forEach(pump => {
+                if (pumpCooldown <= 0 && ballPosition.distanceTo(pump.pos) < ballRadius + 0.8) {
+                    if (pump.type !== ballType) {
+                        pumpCooldown = 0.8; // Prevent multi-trigger sticking
+                        setBallState(pump.type);
+                        sound.playPump(pump.type === 'INFLATE' || pump.type === 'BIG');
+                    }
+                }
+            });
+
+            if (!checkpointActivated && checkpointFlag) {
+                if (ballPosition.distanceTo(checkpointFlag.group.position) < 1.8) {
+                    checkpointActivated = true;
+                    checkpointPosition.copy(ballPosition);
+                    checkpointFlag.clothMat.color.setHex(0x22c55e);
+                    sound.playRingCollect();
+                    showToast("CHECKPOINT SAVED!");
+                }
+            }
+
+            spikes.forEach(spike => {
+                if (ballPosition.distanceTo(spike.pos) < ballRadius + 0.6) {
+                    handlePlayerHit();
+                }
+            });
+
+            if (exitUnlocked && exitRing) {
+                exitRing.rotation.z += delta * 3.5;
+                if (ballPosition.distanceTo(exitRing.position) < 1.4) {
+                    winGame();
+                }
+            }
+        }
+
+        function unlockExitGate() {
+            exitUnlocked = true;
+            if (exitDoor) {
+                scene.remove(exitDoor.mesh);
+            }
+            if (exitRing) {
+                exitRing.material.color.setHex(0x22c55e);
+                exitRing.material.emissive.setHex(0x4ade80);
+            }
+            showToast("EXIT GATE OPENED!");
+        }
+
+        function handlePlayerHit() {
+            sound.playPop();
+            lives--;
+            updateHUD();
+
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                setBallState('NORMAL');
+                resetBallToPosition(checkpointPosition);
+            }
+        }
+
+        function updateHUD() {
+            document.getElementById('lives-count').innerText = `x${lives}`;
+            document.getElementById('rings-count').innerText = `${collectedRings} / ${totalRings}`;
+            document.getElementById('score-text').innerText = String(score).padStart(6, '0');
+        }
+
+        function updateCamera() {
+            if (!ball) return;
+            const targetCamX = ballPosition.x + 2.8;
+            const targetCamY = Math.max(ballPosition.y + 2.2, 3.5);
+            const targetCamZ = 10.0;
+
+            camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetCamX, 0.08);
+            camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetCamY, 0.08);
+            camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetCamZ, 0.08);
+
+            camera.lookAt(ballPosition.x + 1.5, ballPosition.y + 0.5, 0);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = Math.min(clock.getDelta(), 0.1);
+
+            if (gameState === 'PLAYING') {
+                updatePhysics(delta);
+            }
+            
+            updateCamera();
+            renderer.render(scene, camera);
+        }
+
+        function startGame() {
+            sound.init();
+            lives = 3;
+            score = 0;
+            collectedRings = 0;
+            exitUnlocked = false;
+            checkpointActivated = false;
+
+            buildNokiaLevel1();
+            updateHUD();
+
+            gameState = 'PLAYING';
+            hideOverlay();
+        }
+
+        function togglePause() {
+            if (gameState === 'PLAYING') {
+                gameState = 'PAUSED';
+                showOverlay('PAUSED', 'Game is paused', 'RESUME');
+            } else if (gameState === 'PAUSED') {
+                gameState = 'PLAYING';
+                hideOverlay();
+            }
+        }
+
+        function gameOver() {
+            gameState = 'GAMEOVER';
+            showOverlay('GAME OVER', 'You ran out of lives!', 'TRY AGAIN');
+        }
+
+        function winGame() {
+            gameState = 'WIN';
+            sound.playWinTune();
+            score += 2500;
+            updateHUD();
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('bounce_high_score', highScore);
+            }
+
+            showOverlay('LEVEL 1 CLEARED!', `You completed Level 1! Final Score: ${score}`, 'PLAY AGAIN');
+        }
+
+        function showOverlay(title, desc, btnText) {
+            const overlay = document.getElementById('overlay-screen');
+            document.getElementById('overlay-title').innerText = title;
+            document.getElementById('overlay-desc').innerText = desc;
+            document.getElementById('start-btn').innerText = btnText;
+            overlay.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+        }
+
+        function hideOverlay() {
+            const overlay = document.getElementById('overlay-screen');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        window.onload = () => {
+            if (typeof THREE === 'undefined') {
+                console.error("Three.js failed to load.");
+                document.getElementById('overlay-desc').innerText = "Error loading Three.js library. Please refresh.";
+                return;
+            }
+            initScene();
+        };
+    </script>
+</body>
+</html>

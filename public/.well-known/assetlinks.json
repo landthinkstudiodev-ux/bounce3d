@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.landthinkstudio.bounce3d",
+      "sha256_cert_fingerprints": [
+        "10:FA:C2:59:7E:6D:83:91:21:40:91:C2:B9:AA:88:51:30:2C:19:D8:E5:A2:3B:11:47:82:1D:91:02:C4:4B:92"
+      ]
+    }
+  }
+]

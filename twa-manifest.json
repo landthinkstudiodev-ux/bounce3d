@@ -1,0 +1,33 @@
+{
+  "packageId": "com.landthinkstudio.bounce3d",
+  "host": "ais-pre-fbl6tul2notw2npdri73th-983030929293.asia-southeast1.run.app",
+  "name": "Bounce Rolling: 3D Adventure",
+  "shortName": "Bounce 3D",
+  "themeColor": "#090d16",
+  "navigationColor": "#090d16",
+  "backgroundColor": "#090d16",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "/assets/aistudio/image_f1216a49.png",
+  "maskableIconUrl": "/assets/aistudio/image_f1216a49.png",
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "signingKey": {
+    "path": "./bounce3d-release-key.keystore",
+    "alias": "bounce3d-key"
+  },
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": {
+      "enabled": false
+    },
+    "playBilling": {
+      "enabled": false
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  }
+}

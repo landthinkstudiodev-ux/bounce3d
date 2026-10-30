@@ -1,0 +1,114 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile data for logged in or guest player",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "User ID of the player"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the player",
+          "maxLength": 64
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Avatar photo URL of the player",
+          "maxLength": 512
+        },
+        "isAnonymous": {
+          "type": "boolean",
+          "description": "Whether the user is playing in guest mode"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["uid", "displayName", "isAnonymous"]
+    },
+    "LeaderboardScore": {
+      "title": "LeaderboardScore",
+      "description": "Global all-time high score entry for a player",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "User ID of the player"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the player",
+          "maxLength": 64
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Avatar photo URL of the player",
+          "maxLength": 512
+        },
+        "score": {
+          "type": "integer",
+          "description": "Total accumulated game score"
+        },
+        "levelReached": {
+          "type": "integer",
+          "description": "Highest level completed or reached"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the score submission"
+        }
+      },
+      "required": ["uid", "displayName", "score", "levelReached"]
+    },
+    "SpeedrunRecord": {
+      "title": "SpeedrunRecord",
+      "description": "Fastest completion time for a stage",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "User ID of the player"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the player",
+          "maxLength": 64
+        },
+        "levelNumber": {
+          "type": "integer",
+          "description": "Level number (1-11)"
+        },
+        "timeSec": {
+          "type": "number",
+          "description": "Completion time in seconds"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the speedrun record"
+        }
+      },
+      "required": ["uid", "displayName", "levelNumber", "timeSec"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Player profile"
+    },
+    "/leaderboard_scores/{userId}": {
+      "schema": "LeaderboardScore",
+      "description": "Player all-time global high score"
+    },
+    "/leaderboard_speedruns/{recordId}": {
+      "schema": "SpeedrunRecord",
+      "description": "Player best speedrun time per level"
+    }
+  }
+}

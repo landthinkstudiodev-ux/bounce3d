@@ -1,0 +1,293 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-pixel: 'Press Start 2P', monospace;
+    --font-display: 'Luckiest Guy', 'Outfit', sans-serif;
+    --font-bouncy: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+    --font-sans: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100dvw;
+    height: 100dvh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #090d16;
+    color: #f8fafc;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: none;
+  }
+}
+
+.pixel-font {
+  font-family: var(--font-pixel);
+  font-variant-numeric: tabular-nums;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.035em;
+}
+
+.font-bouncy {
+  font-family: var(--font-bouncy);
+}
+
+.title-3d-bounce {
+  font-family: var(--font-display);
+  background: linear-gradient(180deg, #fef08a 0%, #facc15 45%, #ea580c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 0 #7c2d12) drop-shadow(0 6px 12px rgba(0, 0, 0, 0.75));
+}
+
+/* Authentic Miniclip 3D Pushable Button Styles */
+.btn-3d-orange {
+  background: linear-gradient(180deg, #fb923c 0%, #ea580c 48%, #c2410c 100%);
+  border-bottom: 4px solid #7c2d12;
+  box-shadow: 0 4px 12px rgba(194, 65, 12, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.08s ease-in-out;
+}
+.btn-3d-orange:active {
+  transform: translateY(3px);
+  border-bottom-width: 1px;
+  box-shadow: 0 1px 4px rgba(194, 65, 12, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-3d-green {
+  background: linear-gradient(180deg, #34d399 0%, #059669 48%, #047857 100%);
+  border-bottom: 4px solid #064e3b;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.08s ease-in-out;
+}
+.btn-3d-green:active {
+  transform: translateY(3px);
+  border-bottom-width: 1px;
+  box-shadow: 0 1px 4px rgba(5, 150, 105, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-3d-amber {
+  background: linear-gradient(180deg, #fde047 0%, #eab308 48%, #ca8a04 100%);
+  border-bottom: 4px solid #78350f;
+  box-shadow: 0 4px 12px rgba(202, 138, 4, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.08s ease-in-out;
+}
+.btn-3d-amber:active {
+  transform: translateY(3px);
+  border-bottom-width: 1px;
+  box-shadow: 0 1px 4px rgba(202, 138, 4, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-3d-blue {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 48%, #0369a1 100%);
+  border-bottom: 4px solid #0c4a6e;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.08s ease-in-out;
+}
+.btn-3d-blue:active {
+  transform: translateY(3px);
+  border-bottom-width: 1px;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.4), inset 0 1.5px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 3D Stage Tiles */
+.stage-tile-active {
+  background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%);
+  border-bottom: 3px solid #7c2d12;
+  box-shadow: 0 3px 8px rgba(234, 88, 12, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.stage-tile-done {
+  background: linear-gradient(180deg, #059669 0%, #047857 100%);
+  border-bottom: 3px solid #064e3b;
+  box-shadow: 0 2px 6px rgba(4, 120, 87, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.stage-tile-default {
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  border-bottom: 3px solid #0f172a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.hud-text {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.65);
+}
+
+.frosted-hud {
+  background: rgba(9, 13, 22, 0.76);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+}
+
+.frosted-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.96) 0%, rgba(15, 23, 42, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.8),
+    0 0 25px rgba(245, 158, 11, 0.15) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+/* Strict Zero-Scroll Single-Screen Menu Card with Mobile Safe-Area Inset Support */
+.menu-card-adaptive {
+  width: 100%;
+  max-width: 28rem;
+  max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 1.25rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  padding-left: calc(0.95rem + env(safe-area-inset-left, 0px));
+  padding-right: calc(0.95rem + env(safe-area-inset-right, 0px));
+  margin-top: env(safe-area-inset-top, 0px);
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+}
+
+/* Custom Scrollbar for Menu Card */
+.menu-card-adaptive::-webkit-scrollbar {
+  width: 6px;
+}
+.menu-card-adaptive::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 9999px;
+}
+.menu-card-adaptive::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.5);
+  border-radius: 9999px;
+}
+
+.menu-grid-adaptive {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.menu-left-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.4rem;
+  text-align: center;
+}
+
+@media (orientation: landscape), (min-width: 640px) {
+  .menu-card-adaptive {
+    max-width: min(96dvw, 52rem);
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 1.25rem);
+    padding-top: calc(0.85rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(0.85rem + env(safe-area-inset-bottom, 0px));
+    padding-left: calc(1.25rem + env(safe-area-inset-left, 0px));
+    padding-right: calc(1.25rem + env(safe-area-inset-right, 0px));
+  }
+
+  .menu-grid-adaptive {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .menu-left-col {
+    text-align: left;
+    padding-right: 0.75rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Proportional Touch Controls for All Android Screens */
+.touch-btn {
+  background: rgba(15, 23, 42, 0.64);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(255, 255, 255, 0.24);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.15) inset;
+  transition:
+    transform 0.1s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.1s ease,
+    border-color 0.1s ease;
+  touch-action: none;
+  -webkit-touch-callout: none;
+}
+
+.touch-btn-dir {
+  width: clamp(3.6rem, 14vmin, 5rem);
+  height: clamp(3.6rem, 14vmin, 5rem);
+}
+
+.touch-btn-jump {
+  width: clamp(4rem, 16vmin, 5.5rem);
+  height: clamp(4rem, 16vmin, 5.5rem);
+}
+
+.touch-btn:active,
+.touch-btn.active {
+  background: rgba(239, 68, 68, 0.48);
+  border-color: rgba(250, 204, 21, 0.85);
+  transform: scale(0.93);
+}
+
+@keyframes modalJuicePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(20px);
+  }
+  70% {
+    transform: scale(1.03) translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-juice-pop {
+  animation: modalJuicePop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes bearSwipe {
+  0%, 100% {
+    transform: rotate(0deg) translateX(0);
+  }
+  50% {
+    transform: rotate(-25deg) translateX(-0.35rem) scaleX(1.15);
+  }
+}
+
+.animate-bear-swipe {
+  animation: bearSwipe 0.5s ease-in-out infinite;
+}
+
+@keyframes bearIdleGrowl {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  30% {
+    transform: scale(1.03, 0.97) translateY(0.08rem);
+  }
+  60% {
+    transform: scale(0.98, 1.02) translateY(-0.06rem);
+  }
+}
+
+.animate-bear-idle {
+  animation: bearIdleGrowl 1.8s ease-in-out infinite;
+}
+
+

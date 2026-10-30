@@ -1,0 +1,6 @@
+{
+  "name": "Bounce Rolling: 3D Adventure",
+  "description": "An original 3D red-ball arcade physics platformer — master 2-size ball buoyancy, collect gold hoops, dodge moving jacks, polar bears, and conquer 33 sequential stages across 3 World Zones.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
