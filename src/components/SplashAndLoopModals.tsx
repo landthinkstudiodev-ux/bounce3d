@@ -567,177 +567,29 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
         </div>
 
-        <div className="space-y-4 text-xs">
-          {/* BGM Volume Slider */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="font-bold text-slate-200">
-                🎵 {lang === 'id' ? 'Volume Musik Latar (BGM)' : 'Music Volume (BGM)'}
-              </span>
-              <span className="font-extrabold text-amber-300 tabular-nums">
-                {muted ? '0%' : `${Math.round(bgmVolume * 100)}%`}
-              </span>
-            </div>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={muted ? 0 : Math.round(bgmVolume * 100)}
-              onChange={(e) => onChangeBgmVolume(Number(e.target.value) / 100)}
-              className="w-full accent-amber-400 cursor-pointer"
-            />
-          </div>
-
-          {/* SFX Volume Slider + Live Audio Test */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="font-bold text-slate-200">
-                🔊 {lang === 'id' ? 'Volume Efek Suara (SFX)' : 'Sound Effects (SFX)'}
-              </span>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    soundFX.init();
-                    soundFX.playRingCollect();
-                  }}
-                  className="px-2 py-0.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-[10px] font-extrabold text-amber-300 cursor-pointer transition"
-                >
-                  {lang === 'id' ? '🔔 Uji Suara' : '🔔 Test Sound'}
-                </button>
-                <span className="font-extrabold text-amber-300 tabular-nums">
-                  {muted ? '0%' : `${Math.round(sfxVolume * 100)}%`}
-                </span>
-              </div>
-            </div>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={muted ? 0 : Math.round(sfxVolume * 100)}
-              onChange={(e) => onChangeSfxVolume(Number(e.target.value) / 100)}
-              className="w-full accent-amber-400 cursor-pointer"
-            />
-          </div>
-
-          {/* Control Sensitivity Slider & Presets */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="font-bold text-slate-200">
-                🎮{' '}
-                {lang === 'id'
-                  ? 'Sensitivitas Kontrol Bola'
-                  : 'Ball Control Sensitivity'}
-              </span>
-              <span className="font-extrabold text-sky-300 tabular-nums">
-                {Math.round(controlSensitivity * 100)}%
-              </span>
-            </div>
-            <input
-              type="range"
-              min={60}
-              max={150}
-              step={5}
-              value={Math.round(controlSensitivity * 100)}
-              onChange={(e) => onChangeSensitivity(Number(e.target.value) / 100)}
-              className="w-full accent-sky-400 cursor-pointer mb-2"
-            />
-            <div className="grid grid-cols-4 gap-1.5">
-              {[
-                {
-                  val: 0.8,
-                  label: lang === 'id' ? 'Halus 80%' : 'Smooth 80%',
-                },
-                {
-                  val: 1.0,
-                  label: lang === 'id' ? 'Normal 100%' : 'Normal 100%',
-                },
-                {
-                  val: 1.25,
-                  label: lang === 'id' ? 'Cepat 125%' : 'Fast 125%',
-                },
-                {
-                  val: 1.45,
-                  label: lang === 'id' ? 'Pro 145%' : 'Pro 145%',
-                },
-              ].map((opt) => {
-                const active = Math.abs(controlSensitivity - opt.val) < 0.06;
-                return (
-                  <button
-                    key={opt.val}
-                    type="button"
-                    onClick={() => {
-                      soundFX.playBounce();
-                      onChangeSensitivity(opt.val);
-                    }}
-                    className={`min-h-[34px] px-1.5 py-1 rounded-xl font-bold text-[11px] border transition cursor-pointer whitespace-nowrap ${
-                      active
-                        ? 'bg-sky-500 text-slate-950 border-sky-200 font-black'
-                        : 'bg-slate-900 text-slate-300 border-white/10 hover:bg-slate-800'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
+        <div className="grid grid-cols-2 gap-3 text-xs">
+          {/* Audio Section */}
+          <div className="col-span-2 bg-slate-900 p-3 rounded-2xl border border-white/5">
+            <h3 className="font-bold text-slate-400 mb-2">{lang === 'id' ? 'Audio' : 'Audio'}</h3>
+            <div className="grid grid-cols-1 gap-2">
+              <button onClick={onToggleMute} className="w-full py-3 px-2 rounded-2xl bg-amber-500 font-black text-slate-950 shadow-[0_4px_0_rgb(180,83,9)] hover:scale-105 active:scale-95 transition">
+                {muted ? '🔇 Mute' : '🔊 Sound On'}
+              </button>
             </div>
           </div>
-
-          {/* Quick Toggle Grid */}
-          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
-            <button
-              type="button"
-              onClick={onToggleMute}
-              className="min-h-[38px] px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/10 text-left flex items-center justify-between cursor-pointer"
-            >
-              <span>{lang === 'id' ? 'Status Suara' : 'Audio Mute'}</span>
-              <span className="font-extrabold text-amber-300">
-                {muted ? '🔇 OFF' : '🔊 ON'}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onToggleHaptics}
-              className="min-h-[38px] px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/10 text-left flex items-center justify-between cursor-pointer"
-            >
-              <span>{lang === 'id' ? 'Getar Haptik' : 'Haptics'}</span>
-              <span className="font-extrabold text-emerald-300">
-                {hapticsOn ? '📳 ON' : 'OFF'}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onToggleGraphics}
-              className="min-h-[38px] px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/10 text-left flex items-center justify-between cursor-pointer"
-            >
-              <span>{lang === 'id' ? 'Kualitas Grafis' : 'Graphics'}</span>
-              <span className="font-extrabold text-sky-300">
-                {graphicsMode === 'HIGH' ? '✨ HD' : '⚡ 60FPS'}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onToggleLanguage}
-              className="min-h-[38px] px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/10 text-left flex items-center justify-between cursor-pointer"
-            >
-              <span>{lang === 'id' ? 'Bahasa' : 'Language'}</span>
-              <span className="font-extrabold text-amber-200">
-                {lang === 'id' ? '🇮🇩 ID' : '🌐 EN'}
-              </span>
-            </button>
+          {/* Controls Section */}
+          <div className="col-span-2 bg-slate-900 p-3 rounded-2xl border border-white/5">
+            <h3 className="font-bold text-slate-400 mb-2">{lang === 'id' ? 'Kontrol' : 'Controls'}</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={onToggleHaptics} className="py-3 px-2 rounded-2xl bg-sky-500 font-black text-white shadow-[0_4px_0_rgb(2,132,199)] hover:scale-105 active:scale-95 transition">
+                📳 {hapticsOn ? 'Haptic ON' : 'Haptic OFF'}
+              </button>
+              <button onClick={onToggleGraphics} className="py-3 px-2 rounded-2xl bg-emerald-500 font-black text-white shadow-[0_4px_0_rgb(5,150,105)] hover:scale-105 active:scale-95 transition">
+                🖥️ {graphicsMode === 'PERFORMANCE' ? 'HD' : 'ECO'}
+              </button>
+            </div>
           </div>
         </div>
-
-        <button
-          type="button"
-          onClick={onClose}
-          className="w-full min-h-[42px] mt-5 py-2.5 px-4 rounded-xl btn-3d-orange text-white font-display text-xs sm:text-sm tracking-wider uppercase cursor-pointer"
-        >
-          {lang === 'id' ? 'Simpan & Tutup' : 'Save & Close'}
-        </button>
       </div>
     </div>
   );
