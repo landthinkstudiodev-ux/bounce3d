@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "Bounce Rolling: 3D Adventure",
+  "short_name": "Bounce 3D",
+  "description": "An original 3D red-ball arcade physics platformer — master 2-size ball buoyancy, collect gold hoops, dodge moving jacks, polar bears, and conquer 33 sequential stages across 3 World Zones.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "icons": [
+    {
+      "src": "/assets/aistudio/image_f1216a49.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/aistudio/image_f1216a49.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
