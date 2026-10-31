@@ -54,6 +54,7 @@ import {
   isStageUnlockedByZoneRules,
   getHighestUnlockedStageIndex,
 } from './components/SplashAndLoopModals';
+import { BouncyButton } from './components/BouncyButton';
 import {
   RingIcon,
   SpinIcon,
@@ -1824,6 +1825,7 @@ export default function App() {
             particleBurstRef.current?.triggerBurst(x, y, preset);
           }}
           onClose={() => setShowDailyMissionsModal(false)}
+          lang={lang}
         />
       )}
 

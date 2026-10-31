@@ -7,6 +7,7 @@ import { ArcadeIconTile } from './ArcadeIcons';
 
 interface DailyMissionsModalProps {
   t: I18nStrings;
+  lang: GameLang;
   missions: DailyMission[];
   onClaimReward: (missionId: string, reward: number) => void;
   onClose: () => void;
@@ -113,6 +114,7 @@ const MissionProgressRingIcon: React.FC<ProgressRingIconProps> = ({
 
 export const DailyMissionsModal: React.FC<DailyMissionsModalProps> = ({
   t,
+  lang,
   missions,
   onClaimReward,
   onClose,
