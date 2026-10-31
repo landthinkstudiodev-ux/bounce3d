@@ -36,13 +36,17 @@ export const LeaderboardModal: React.FC<LeaderboardModalProps> = ({ onClose, lan
         <div className="flex gap-2 mb-6">
           <button
             onClick={() => setActiveTab('global')}
-            className={`flex-1 py-2 rounded-xl font-bold ${activeTab === 'global' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'}`}
+            className={`flex-1 py-3 rounded-2xl font-black shadow-[0_4px_0_rgb(30,41,59)] hover:scale-105 active:scale-95 transition ${
+              activeTab === 'global' ? 'bg-amber-500 text-slate-950 shadow-[0_4px_0_rgb(180,83,9)]' : 'bg-slate-800 text-slate-300'
+            }`}
           >
             {lang === 'id' ? 'Global' : 'Global'}
           </button>
           <button
             onClick={() => setActiveTab('daily')}
-            className={`flex-1 py-2 rounded-xl font-bold ${activeTab === 'daily' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'}`}
+            className={`flex-1 py-3 rounded-2xl font-black shadow-[0_4px_0_rgb(30,41,59)] hover:scale-105 active:scale-95 transition ${
+              activeTab === 'daily' ? 'bg-amber-500 text-slate-950 shadow-[0_4px_0_rgb(180,83,9)]' : 'bg-slate-800 text-slate-300'
+            }`}
           >
             {lang === 'id' ? 'Harian' : 'Daily'}
           </button>

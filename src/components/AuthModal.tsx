@@ -260,7 +260,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               type="button"
               disabled={loading}
               onClick={handleGoogleLogin}
-              className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 font-black text-xs flex items-center justify-center gap-2.5 shadow-lg shadow-white/10 transition cursor-pointer"
+              className="w-full py-4 px-4 rounded-2xl bg-white text-slate-950 font-black shadow-[0_6px_0_rgb(209,213,219)] hover:scale-105 active:scale-95 transition text-xs flex items-center justify-center gap-2.5 cursor-pointer"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -287,7 +287,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               type="button"
               disabled={loading}
               onClick={handleGuestPlay}
-              className="w-full py-2.5 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer"
+              className="w-full py-4 px-4 rounded-2xl bg-slate-700 text-white font-black shadow-[0_6px_0_rgb(30,41,59)] hover:scale-105 active:scale-95 transition text-xs flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>👤</span>
               <span>{t.playAsGuest}</span>
