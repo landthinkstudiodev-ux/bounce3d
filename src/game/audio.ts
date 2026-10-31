@@ -458,24 +458,26 @@ class RetroBounceAudio {
     });
   }
   public playButtonPop() {
-    this.vibrate(10);
+    this.vibrate(12);
     this.init();
     if (!this.ctx || this.muted || this.sfxVolume <= 0.01) return;
 
     const now = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(440, now);
-    osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
+    
+    // Playful 'pop' synthesis
+    osc.type = 'triangle'; 
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.06);
 
-    gain.gain.setValueAtTime(0.2 * this.sfxVolume, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+    gain.gain.setValueAtTime(0.3 * this.sfxVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
 
     osc.connect(gain);
     gain.connect(this.ctx.destination);
     osc.start(now);
-    osc.stop(now + 0.05);
+    osc.stop(now + 0.08);
   }
 }
 
