@@ -295,10 +295,10 @@ export const DailyMissionsModal: React.FC<DailyMissionsModalProps> = ({
                         }
                         onClaimReward(m.id, m.rewardScore);
                       }}
-                      className="px-4 py-1.5 rounded-xl btn-3d-green text-white font-extrabold text-xs tracking-wider cursor-pointer flex items-center gap-1.5 shadow-lg animate-bounce uppercase"
+                      className="px-6 py-3 rounded-2xl bg-emerald-500 font-black text-slate-950 shadow-[0_4px_0_rgb(5,150,105)] hover:scale-105 active:scale-95 transition text-xs tracking-wider cursor-pointer flex items-center gap-2 uppercase"
                     >
                       <ArcadeAssetIcon iconKey="trophy" className="w-4 h-4" />
-                      <span>Klaim Reward</span>
+                      <span>{isId ? 'Klaim Hadiah' : 'Claim Reward'}</span>
                     </button>
                   ) : (
                     <div className="text-[11px] text-slate-400 font-bold flex items-center gap-1">

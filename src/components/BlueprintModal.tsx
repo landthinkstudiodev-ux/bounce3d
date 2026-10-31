@@ -244,9 +244,13 @@ export const BlueprintModal: React.FC<BlueprintModalProps> = ({
                             onSelectLevel(idx);
                             onClose();
                           }}
-                          className={`min-h-[36px] px-3.5 py-1.5 rounded-xl font-display text-xs tracking-wider transition shrink-0 whitespace-nowrap uppercase ${playBtnClass}`}
+                          className={`min-h-[44px] px-5 py-2.5 rounded-2xl font-black text-xs tracking-wider transition shrink-0 whitespace-nowrap uppercase cursor-pointer hover:scale-105 active:scale-95 ${
+                            isLocked
+                              ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
+                              : 'bg-emerald-500 text-slate-950 shadow-[0_4px_0_rgb(5,150,105)]'
+                          }`}
                         >
-                          {isLocked ? t.lockedBtn : t.playShortBtn}
+                          {isLocked ? '🔒' : t.playShortBtn}
                         </button>
                       </div>
                     );

@@ -101,19 +101,19 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({
 
                   <div className="shrink-0 flex items-center">
                     {state.isClaimed ? (
-                      <span className="px-2.5 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold whitespace-nowrap">
+                      <span className="px-4 py-3 rounded-2xl bg-emerald-500 font-black text-slate-950 shadow-[0_4px_0_rgb(5,150,105)] text-xs whitespace-nowrap">
                         ✓ {isId ? 'Diklaim' : 'Claimed'}
                       </span>
                     ) : state.isCompleted ? (
                       <button
                         type="button"
                         onClick={() => handleClaim(achievement.id)}
-                        className="px-3 py-1.5 rounded-xl btn-3d-green text-white font-display text-xs tracking-wider cursor-pointer whitespace-nowrap uppercase shadow-md"
+                        className="px-4 py-3 rounded-2xl bg-emerald-500 font-black text-slate-950 shadow-[0_4px_0_rgb(5,150,105)] hover:scale-105 active:scale-95 transition text-xs whitespace-nowrap cursor-pointer uppercase"
                       >
                         {isId ? 'Klaim' : 'Claim'}
                       </button>
                     ) : (
-                      <span className="text-xs text-slate-400 font-bold tabular-nums whitespace-nowrap bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">
+                      <span className="px-4 py-3 rounded-2xl bg-slate-950 text-slate-400 font-black text-xs border border-slate-700 whitespace-nowrap">
                         {state.progress}/{achievement.target}
                       </span>
                     )}
@@ -121,9 +121,9 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden mt-1 border border-slate-800">
+                <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden mt-2 border border-slate-800">
                   <div
-                    className="h-full bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-500 transition-all duration-300 shadow-[0_0_8px_rgba(251,191,36,0.5)]"
+                    className="h-full bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-300"
                     style={{ width: `${Math.min(100, (state.progress / achievement.target) * 100)}%` }}
                   />
                 </div>
@@ -133,11 +133,11 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="pt-3 border-t border-slate-800 flex justify-end">
+        <div className="pt-4 border-t border-slate-800 flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-xl btn-3d-orange text-white font-display text-xs uppercase tracking-wider cursor-pointer shadow-md"
+            className="px-6 py-3 rounded-2xl bg-sky-500 font-black text-white shadow-[0_4px_0_rgb(2,132,199)] hover:scale-105 active:scale-95 transition text-xs uppercase tracking-wider cursor-pointer"
           >
             {isId ? 'Tutup' : 'Close'}
           </button>

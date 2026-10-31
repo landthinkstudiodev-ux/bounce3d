@@ -312,7 +312,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                           if (isBallSkin) onEquipSkin('default_red');
                           if (isTrail) onEquipTrail('default_red');
                         }}
-                        className="px-3.5 py-2 rounded-xl bg-emerald-500/25 hover:bg-emerald-500/35 text-emerald-300 border border-emerald-400/50 text-xs font-extrabold whitespace-nowrap shrink-0 cursor-pointer transition"
+                        className="px-4 py-3 rounded-2xl bg-emerald-500 font-black text-slate-950 shadow-[0_4px_0_rgb(5,150,105)] hover:scale-105 active:scale-95 transition text-xs whitespace-nowrap shrink-0 cursor-pointer"
                         title="Klik untuk melepas kembali ke standar"
                       >
                         ✓ Terpasang
@@ -325,13 +325,13 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                           if (isBallSkin) onEquipSkin(item.id as BallSkinId);
                           if (isTrail) onEquipTrail(item.id as TrailEffectId);
                         }}
-                        className="px-3.5 py-2 rounded-xl btn-3d-green text-white text-xs font-extrabold whitespace-nowrap shrink-0 cursor-pointer uppercase"
+                        className="px-4 py-3 rounded-2xl bg-amber-500 font-black text-slate-950 shadow-[0_4px_0_rgb(180,83,9)] hover:scale-105 active:scale-95 transition text-xs whitespace-nowrap shrink-0 cursor-pointer uppercase"
                       >
                         Pasang
                       </button>
                     )
                   ) : (
-                    <span className="px-3.5 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-extrabold whitespace-nowrap shrink-0">
+                    <span className="px-4 py-3 rounded-2xl bg-emerald-500 font-black text-slate-950 shadow-[0_4px_0_rgb(5,150,105)] text-xs whitespace-nowrap shrink-0">
                       ✓ Aktif
                     </span>
                   )
@@ -342,7 +342,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                       soundFX.playRingCollect();
                       onBuyItem(item);
                     }}
-                    className="px-4 py-2 rounded-xl btn-3d-amber text-slate-950 font-black text-xs tracking-wider cursor-pointer whitespace-nowrap uppercase shrink-0 shadow-md"
+                    className="px-4 py-3 rounded-2xl bg-sky-500 font-black text-white shadow-[0_4px_0_rgb(2,132,199)] hover:scale-105 active:scale-95 transition text-xs tracking-wider cursor-pointer whitespace-nowrap uppercase shrink-0"
                   >
                     {item.priceFormatted}
                   </button>
