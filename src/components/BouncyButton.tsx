@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { soundFX } from '../game/audio';
+import { playPopSound } from '../game/audioEngine';
 
 interface BouncyButtonProps {
   onClick: () => void;
@@ -16,7 +16,7 @@ export const BouncyButton: React.FC<BouncyButtonProps> = ({
   variant = 'primary'
 }) => {
   const handleClick = () => {
-    soundFX.playButtonPop(); 
+    playPopSound(); 
     onClick();
   };
 
