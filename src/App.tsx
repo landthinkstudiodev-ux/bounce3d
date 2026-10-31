@@ -1277,42 +1277,23 @@ export default function App() {
                       </div>
 
                       {/* Prominent Main Menu Navigation Bar: Level Select, Shop/Skins, Settings */}
-                      <div className="grid grid-cols-3 gap-1.5 pt-0.5">
-                        <button
-                          type="button"
-                          onClick={() => setShowLevelModal(true)}
-                          className="min-h-[36px] px-2 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/15 text-slate-200 font-extrabold text-[11px] flex items-center justify-center gap-1 cursor-pointer transition whitespace-nowrap"
+                      {/* Minimalist Main Menu */}
+                      <div className="flex flex-col items-center justify-center gap-6 py-6">
+                        {/* Play Button - Large & Bouncy */}
+                        <BouncyButton
+                          onClick={() => handleStartGame(1)}
+                          className="w-32 h-32 rounded-full bg-emerald-500 shadow-[0_8px_0_rgb(5,150,105)] flex items-center justify-center text-4xl"
                         >
-                          <span>🗺️</span>
-                          <span>{lang === 'id' ? 'Pilih Level' : 'Levels'}</span>
-                        </button>
+                          ▶️
+                        </BouncyButton>
 
-                        <button
-                          type="button"
-                          onClick={() => setShowShopModal(true)}
-                          className="min-h-[36px] px-2 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-300 font-extrabold text-[11px] flex items-center justify-center gap-1 cursor-pointer transition whitespace-nowrap"
-                        >
-                          <span>🎨</span>
-                          <span>{lang === 'id' ? 'Toko & Skin' : 'Shop & Skins'}</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setShowSettingsModal(true)}
-                          className="min-h-[36px] px-2 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/50 text-sky-300 font-extrabold text-[11px] flex items-center justify-center gap-1 cursor-pointer transition whitespace-nowrap"
-                        >
-                          <span>⚙️</span>
-                          <span>{lang === 'id' ? 'Pengaturan' : 'Settings'}</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setShowLeaderboardModal(true)}
-                          className="min-h-[36px] px-2 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/50 text-emerald-300 font-extrabold text-[11px] flex items-center justify-center gap-1 cursor-pointer transition whitespace-nowrap"
-                        >
-                          <span>🏆</span>
-                          <span>{lang === 'id' ? 'Peringkat' : 'Rank'}</span>
-                        </button>
+                        {/* Bottom Row - Subtle, Icon-only Navigation */}
+                        <div className="flex gap-4 p-4 rounded-3xl bg-slate-900/50 backdrop-blur-sm border border-white/10">
+                          <BouncyButton onClick={() => setShowLevelModal(true)} className="p-3 bg-slate-800 rounded-2xl text-xl">🗺️</BouncyButton>
+                          <BouncyButton onClick={() => setShowShopModal(true)} className="p-3 bg-slate-800 rounded-2xl text-xl">🎨</BouncyButton>
+                          <BouncyButton onClick={() => setShowLeaderboardModal(true)} className="p-3 bg-slate-800 rounded-2xl text-xl">🏆</BouncyButton>
+                          <BouncyButton onClick={() => setShowSettingsModal(true)} className="p-3 bg-slate-800 rounded-2xl text-xl">⚙️</BouncyButton>
+                        </div>
                       </div>
                     </div>
                   )}
