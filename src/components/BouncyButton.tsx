@@ -33,6 +33,7 @@ export const BouncyButton: React.FC<BouncyButtonProps> = ({
       whileHover="hover"
       whileTap="pressed"
       variants={variants}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
       onClick={handleClick}
       className={`${baseStyles} ${className}`}
     >
