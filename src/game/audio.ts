@@ -457,6 +457,26 @@ class RetroBounceAudio {
       osc.stop(now + idx * 0.065 + 0.18);
     });
   }
+  public playButtonPop() {
+    this.vibrate(10);
+    this.init();
+    if (!this.ctx || this.muted || this.sfxVolume <= 0.01) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(440, now);
+    osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
+
+    gain.gain.setValueAtTime(0.2 * this.sfxVolume, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.05);
+  }
 }
 
 export const soundFX = new RetroBounceAudio();
